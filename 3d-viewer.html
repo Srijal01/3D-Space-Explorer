@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive 3D Space Explorer with Particle Effects">
+    <title>3D Space Explorer - WebGL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        #canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 320px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .controls::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .controls::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .controls::-webkit-scrollbar-thumb {
+            background: rgba(240, 148, 51, 0.6);
+            border-radius: 3px;
+        }
+
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(240, 148, 51, 0.8);
+        }
+
+        .controls h1 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .control-group label span {
+            color: #f09433;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(45deg, #f09433, #dc2743);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(45deg, #f09433, #dc2743);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select option {
+            background: #1a1a2e;
+        }
+
+        button {
+            background: linear-gradient(45deg, #f09433, #dc2743);
+            border: none;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 148, 51, 0.4);
+        }
+
+        .info-stats {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #f09433;
+        }
+
+        .info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .info strong {
+            color: #f09433;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="controls">
+        <h1>� Space Explorer</h1>
+
+        <div class="control-group">
+            <label for="cameraMode">Camera Mode:</label>
+            <select id="cameraMode">
+                <option value="orbit">Orbit</option>
+                <option value="follow">Follow</option>
+                <option value="fly">Fly Through</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="shapeSelect">Shape: <span id="shapeLabel">Cube</span></label>
+            <select id="shapeSelect">
+                <option value="cube">Cube</option>
+                <option value="sphere">Sphere</option>
+                <option value="torus">Torus</option>
+                <option value="pyramid">Pyramid</option>
+                <option value="cylinder">Cylinder</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="rotationSpeed">Rotation Speed: <span id="speedVal">1.0</span></label>
+            <input type="range" id="rotationSpeed" min="0" max="5" value="1" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label for="zoom">Zoom: <span id="zoomVal">5.0</span></label>
+            <input type="range" id="zoom" min="2" max="10" value="5" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label for="starCount">Star Field: <span id="starVal">200</span></label>
+            <input type="range" id="starCount" min="0" max="500" value="200" step="10">
+        </div>
+
+        <div class="control-group">
+            <label for="colorScheme">Color:</label>
+            <select id="colorScheme">
+                <option value="gradient">Gradient</option>
+                <option value="solid">Solid Color</option>
+                <option value="rainbow">Rainbow</option>
+                <option value="texture">Textured</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="checkbox">
+                <input type="checkbox" id="wireframe">
+                <span>Wireframe Mode</span>
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" id="autoRotate" checked>
+                <span>Auto Rotate</span>
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" id="lighting" checked>
+                <span>Lighting</span>
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" id="rimLight" checked>
+                <span>Rim Glow</span>
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" id="trailEffect">
+                <span>Motion Trail</span>
+            </label>
+        </div>
+
+        <button id="spawnBtn">✨ Spawn Object</button>
+        <button id="resetBtn">🔄 Reset View</button>
+    </div>
+
+    <div class="info">
+        <strong>Controls:</strong><br>
+        🖱️ Drag to rotate<br>
+        🔍 Scroll to zoom<br>
+        ⌨️ Space to pause<br>
+        <div class="info-stats">
+            Objects: <strong id="objectCount">1</strong><br>
+            Stars: <strong id="starCountDisplay">200</strong>
+        </div>
+    </div>
+
+    <script src="webgl-viewer.js"></script>
+</body>
+</html>
