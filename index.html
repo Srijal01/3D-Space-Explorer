@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Studio Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="controls">
+        <div class="header">
+            <h1>🎨 Particle Studio</h1>
+            <div class="header-buttons">
+                <button id="toggleControls" class="icon-btn">⚙️</button>
+                <button id="fullscreenBtn" class="icon-btn">⛶</button>
+            </div>
+        </div>
+        
+        <div class="control-panel" id="controlPanel">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="particles">Particles</button>
+                <button class="tab-btn" data-tab="physics">Physics</button>
+                <button class="tab-btn" data-tab="visual">Visual</button>
+                <button class="tab-btn" data-tab="presets">Presets</button>
+            </div>
+
+            <div class="tab-content active" id="particles-tab">
+                <label>
+                    Count: <span id="countVal">100</span>
+                    <input type="range" id="particleCount" min="10" max="500" value="100">
+                </label>
+                <label>
+                    Size: <span id="sizeVal">3</span>
+                    <input type="range" id="particleSize" min="1" max="10" value="3" step="0.5">
+                </label>
+                <label>
+                    Speed: <span id="speedVal">100</span>%
+                    <input type="range" id="particleSpeed" min="10" max="300" value="100">
+                </label>
+                <label>
+                    Connection: <span id="distanceVal">150</span>
+                    <input type="range" id="connectionDistance" min="0" max="400" value="150">
+                </label>
+                <label>
+                    Shape:
+                    <select id="particleShape">
+                        <option value="circle">Circle</option>
+                        <option value="square">Square</option>
+                        <option value="triangle">Triangle</option>
+                        <option value="star">Star</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="tab-content" id="physics-tab">
+                <label>
+                    Mouse: <span id="mouseVal">Attract (50)</span>
+                    <input type="range" id="mouseAttraction" min="-100" max="100" value="50">
+                </label>
+                <label>
+                    Gravity: <span id="gravityVal">0</span>
+                    <input type="range" id="gravity" min="-2" max="2" value="0" step="0.1">
+                </label>
+                <label>
+                    Wind: <span id="windVal">0</span>
+                    <input type="range" id="wind" min="-2" max="2" value="0" step="0.1">
+                </label>
+                <label>
+                    Turbulence: <span id="turbulenceVal">0</span>
+                    <input type="range" id="turbulence" min="0" max="5" value="0" step="0.1">
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="collision">
+                    <span>Particle Collision</span>
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="wallBounce" checked>
+                    <span>Wall Bounce</span>
+                </label>
+            </div>
+
+            <div class="tab-content" id="visual-tab">
+                <label>
+                    Theme:
+                    <select id="colorTheme">
+                        <option value="cyber">Cyber</option>
+                        <option value="fire">Fire</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="rainbow">Rainbow</option>
+                        <option value="mono">Mono</option>
+                    </select>
+                </label>
+                <label>
+                    Trail: <span id="trailVal">10</span>%
+                    <input type="range" id="trailEffect" min="0" max="100" value="10">
+                </label>
+                <label>
+                    Glow: <span id="glowVal">10</span>
+                    <input type="range" id="glowIntensity" min="0" max="30" value="10">
+                </label>
+                <label>
+                    Lines: <span id="lineVal">1</span>
+                    <input type="range" id="lineWidth" min="0.5" max="5" value="1" step="0.5">
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="showConnections" checked>
+                    <span>Show Connections</span>
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" id="showFPS">
+                    <span>FPS Counter</span>
+                </label>
+            </div>
+
+            <div class="tab-content" id="presets-tab">
+                <div class="preset-grid">
+                    <button class="preset-btn" data-preset="galaxy">🌌 Galaxy</button>
+                    <button class="preset-btn" data-preset="fireflies">✨ Fireflies</button>
+                    <button class="preset-btn" data-preset="matrix">💚 Matrix</button>
+                    <button class="preset-btn" data-preset="storm">⚡ Storm</button>
+                    <button class="preset-btn" data-preset="fireworks">🎆 Fireworks</button>
+                    <button class="preset-btn" data-preset="constellation">⭐ Stars</button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="resetBtn">🔄 Reset</button>
+                <button id="pauseBtn">⏸️ Pause</button>
+                <button id="clearBtn">🗑️ Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fps" class="fps hidden">60 FPS</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
